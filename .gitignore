@@ -1,3 +1,4 @@
 /venv
 /keys.py
 /.idea
+/__pycache__

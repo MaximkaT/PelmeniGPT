@@ -1,38 +1,38 @@
 import discord
 from discord.ext import commands
-import openai
+from GPT import gptReply
 from keys import botKey, AIkey
+import openai
 
+# Permissions for the bot
 intents = discord.Intents.all()
+# Bot itself
 bot = commands.Bot(command_prefix="/", intents=intents)
+# Key that allows you to use ChatGPT
 openai.api_key = AIkey
 
-messages = {}
+messages = {}  # Previous Discord messages
 
 
+# Checking if the bot is ready
 @bot.event
 async def on_ready():
     print(f"We have logged in as {bot.user}")
 
 
+# Main command that receives your message and sends you a reply to it
 @bot.command()
-async def chat(ctx, *, message):
-    user = ctx.author
-    try:
-        messages[user] += [{'role': 'user', 'content': message}]
-    except KeyError:
-        messages[user] = []
-        messages[user] += [{'role': 'user', 'content': message}]
-    history = openai.ChatCompletion.create(model='gpt-3.5-turbo', messages=messages[user])
-    reply = history.choices[0].message.content
-    messages[user] += [{'role': 'assistant', 'content': reply}]
-    await ctx.send(f'{user}:')
-    await ctx.send(reply)
+async def chat(context, *, message):
+    # message - your message
+    user = context.author  # User's name
+    reply = gptReply(messages, user, message)  # Function that returns a reply for your message
+    await context.send(f'{user}:' + '\n' + reply)  # Send reply as a discord message with username as a label
 
 
+# Command to reset your message history if needed
 @bot.command()
 async def resetHistory(ctx):
     messages[ctx.author] = []
 
 
-bot.run(botKey)
+bot.run(botKey)  # Bot launch
