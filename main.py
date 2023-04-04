@@ -21,7 +21,7 @@ async def on_ready():
 
 
 # Main command that receives your message and sends you a reply to it
-@bot.command()
+@bot.command(name='chat', description='Send a prompt to the bot')
 async def chat(context, *, message):
     # message - your message
     user = context.author  # User's name
@@ -30,7 +30,7 @@ async def chat(context, *, message):
 
 
 # Command to reset your message history if needed
-@bot.command()
+@bot.command(name='resetHistory', description="Resets the history of your and bot's messages")
 async def resetHistory(ctx):
     messages[ctx.author] = []
 
