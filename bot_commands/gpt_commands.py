@@ -29,6 +29,7 @@ class GPTCommands(commands.Cog):
                 auto_archive_duration=4320  # 3 days
             )
             await self.reply(new_thread, [self.arrangeMes(ctx.message)], ctx.message.author)
+            return
         elif ctx.channel.name.startswith('bot '):
             messages = [message async for message in ctx.channel.history(limit=200) if
                         message.content.startswith('/gpt ')
