@@ -3,6 +3,5 @@
 /.idea
 /__pycache__
 /Что сделать
-/.env
 bot_commands/__pycache__/
 utility_functions/__pycache__/

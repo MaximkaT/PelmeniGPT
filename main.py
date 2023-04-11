@@ -1,14 +1,11 @@
 import discord
 from discord.ext import commands
 import openai
-import os
 import aiohttp
-import dotenv
-
-dotenv.load_dotenv()
+from keys import botKey, aiKey
 
 # Key that allows you to use ChatGPT
-openai.api_key = str(os.getenv("AIkey"))
+openai.api_key = aiKey
 
 
 class MyBot(commands.Bot):
@@ -33,4 +30,4 @@ class MyBot(commands.Bot):
 
 
 bot = MyBot()
-bot.run(str(os.getenv("BOTkey")))
+bot.run(botKey)
