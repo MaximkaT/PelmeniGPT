@@ -6,10 +6,11 @@ class GPTCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot_channel = None
+        self.bot_prefix = '/'
 
     def arrangeMes(self, message):
         role = 'user' if message.author != self.bot.user else 'assistant'
-        mes = message.content.replace('/gpt ', '') if message.author != self.bot.user \
+        mes = message.content.replace(f'{self.bot_prefix}gpt ', '') if message.author != self.bot.user \
             else message.content.split(':\n', 1)[1]
         return {'role': role, 'content': mes}
 
@@ -17,11 +18,12 @@ class GPTCommands(commands.Cog):
         author = ctx.message.author.mention if mesAuthor is None else mesAuthor.mention
         ans = await ctx.send(f'{author}:' + '\n' + 'Ожидайте')
         reply = gptReply(messages)
+        print(reply)
         await ans.edit(content=f'{author}:' + '\n' + reply)
 
     @commands.command(name='gpt')
     async def gpt(self, ctx, *, message):
-        print('Запрос был отправлен и обрабатывается.')
+        print('Запрос был принят и обрабатывается.')
         if ctx.channel == self.bot_channel:
             new_thread = await ctx.channel.create_thread(
                 name='bot ' + '_'.join(message.split()[:3]) + ' ' + str(ctx.message.author),
@@ -29,16 +31,17 @@ class GPTCommands(commands.Cog):
                 auto_archive_duration=4320  # 3 days
             )
             await self.reply(new_thread, [self.arrangeMes(ctx.message)], ctx.message.author)
+            print('Ответ отправлен')
             return
         elif ctx.channel.name.startswith('bot '):
             messages = [message async for message in ctx.channel.history(limit=200) if
-                        message.content.startswith('/gpt ')
+                        message.content.startswith(f'{self.bot_prefix}gpt ')
                         or message.author == self.bot.user][:-1]
             messages.append(await ctx.channel.parent.fetch_message(ctx.channel.id))
             messages.reverse()
             messages = list(map(self.arrangeMes, messages))
-            print(messages)
             await self.reply(ctx, messages)
+            print('Ответ отправлен')
 
     @commands.command()
     async def initChannel(self, ctx):
